@@ -1,0 +1,6 @@
+FIT = 2
+HIT = 1
+MISS = 0
+
+ERODE = 0
+DILATE = 1
