@@ -101,29 +101,33 @@ def segment_image(img, kernel):
 
     queue = []
 
-    for y in range(0, height):
-        for x in range(0, width):
-            if (img[x, y] == 0 and groups[x, y] == 0):
-                groups[x, y] = current_group
-                bounds[current_group] = ((y, x), (y, x))
+    # PERCORRENDO A IMAGEM
+    for y1 in range(0, height):
+        for x1 in range(0, width):
 
-                queue = queue + get_neighbours(img, (x, y), kernel)
+            # SE O PIXEL É PRETO E NÃO POSSUI GRUPO
+            if (img[x1, y1] == 0 and groups[x1, y1] == 0):
+                groups[x1, y1] = current_group
+                bounds[current_group] = ((y1, x1), (y1, x1))
 
+                queue = queue + get_neighbours(img, (x1, y1), kernel)
+
+                # PERCORRENDO PELOS PIXELS PRETOS ADJACENTES
                 while queue:
-                    pos_x, pos_y = queue.pop(0)
+                    x2, y2 = queue.pop(0)
 
-                    if (groups[pos_x, pos_y] == 0):
-                        groups[pos_x, pos_y] = current_group
+                    if (groups[x2, y2] == 0):
+                        groups[x2, y2] = current_group
 
                         p_1 = bounds[current_group][0]
                         p_2 = bounds[current_group][1]
 
-                        p_1 = (min(pos_y, p_1[0]), min(pos_x, p_1[1]))
-                        p_2 = (max(pos_y, p_2[0]), max(pos_x, p_2[1]))
+                        p_1 = (min(y2, p_1[0]), min(x2, p_1[1]))
+                        p_2 = (max(y2, p_2[0]), max(x2, p_2[1]))
 
                         bounds[current_group] = (p_1, p_2)
 
-                        queue = queue + get_neighbours(img, (pos_x, pos_y), kernel)
+                        queue = queue + get_neighbours(img, (x2, y2), kernel)
 
                 current_group = current_group + 1
 
@@ -184,13 +188,6 @@ def draw_bounds(img, bounds, color):
 
     return img
 
-def display_img(img):
-    """
-    Exibe uma imagem em uma nova janela.
-
-    Parâmetros:
-    - img: Matriz de pixels
-    """
-
-    plt.imshow(img)
-    plt.show()
+def get_threshold(img):
+    ret, img = cv.threshold(img, 200, 255, cv.THRESH_BINARY)
+    return img
